@@ -1,13 +1,15 @@
+import { Fragment } from "react";
 import { Route, Switch } from "react-router-dom";
-import LoginPage from "./Pages/LoginPage/LoginPage";
-import SignUpPage from "./Pages/SignUpPage/SignUpPage";
+import LoginPage from "./Pages/LoginPage/Login";
+import NavBar from "./Pages/NavBar";
+import SignUpPage from "./Pages/SignUpPage/SignUp";
 import Welcome from "./Pages/WelcomePage/Welcome";
-import Layout from "./UI/Layout";
 
 function App() {
   const token = localStorage.getItem("user@mail.com");
   return (
-    <Layout>
+    <Fragment>
+      <NavBar />
       <Switch>
         <Route path="/" exact>
           <SignUpPage />
@@ -21,7 +23,7 @@ function App() {
           </Route>
         )}
       </Switch>
-    </Layout>
+    </Fragment>
   );
 }
 
