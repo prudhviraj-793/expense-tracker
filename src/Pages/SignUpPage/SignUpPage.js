@@ -1,10 +1,12 @@
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
+import { useHistory } from "react-router-dom";
 import "./SignUpPage.css";
 
-function SingUpPage() {
+function SignUpPage() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
+  const history = useHistory()
 
   async function signUp(mail, psswd) {
     const url =
@@ -14,7 +16,7 @@ function SingUpPage() {
       body: JSON.stringify({
         email: mail,
         password: psswd,
-        returnSecureToken: true
+        returnSecureToken: true,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -32,6 +34,7 @@ function SingUpPage() {
 
     if (enteredPassword === enteredConfirmPassword) {
       signUp(enteredEmail, enteredPassword);
+      history.push('/login')
       emailRef.current.value = "";
     } else {
       alert("please re-renter password");
@@ -41,28 +44,33 @@ function SingUpPage() {
   }
 
   return (
-    <form onSubmit={submitHandler} className="form">
-      <div className="header">SignUp</div>
-      <div className="input">
-        <input type="email" ref={emailRef} placeholder="Email" required />
-        <input
-          type="password"
-          ref={passwordRef}
-          placeholder="Password"
-          required
-        />
-        <input
-          type="password"
-          ref={confirmPasswordRef}
-          placeholder="Confirm Password"
-          required
-        />
-      </div>
-      <div className="btn">
-        <button type="submit">Sign Up</button>
-      </div>
-    </form>
+    <Fragment>
+      <form onSubmit={submitHandler} className="form">
+        <div className="header">SignUp</div>
+        <div className="input">
+          <input type="email" ref={emailRef} placeholder="Email" required />
+          <input
+            type="password"
+            ref={passwordRef}
+            placeholder="Password"
+            required
+          />
+          <input
+            type="password"
+            ref={confirmPasswordRef}
+            placeholder="Confirm Password"
+            required
+          />
+        </div>
+        <div className="btn">
+          <button type="submit">Sign Up</button>
+        </div>
+        <div className="header">
+          <p>Have an account? Login</p>
+        </div>
+      </form>
+    </Fragment>
   );
 }
 
-export default SingUpPage;
+export default SignUpPage;
