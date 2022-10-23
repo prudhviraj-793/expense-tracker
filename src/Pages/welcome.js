@@ -1,4 +1,4 @@
-import { Fragment, useContext, useRef } from "react";
+import { Fragment, useCallback, useContext, useEffect, useRef } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { addExpeses, deleteExpeses, verifyEmail } from "../Api/api";
 import Context from "../Context/Context";
@@ -11,6 +11,41 @@ function Welcome() {
   const descriptionRef = useRef();
   const categoryRef = useRef();
   const expenses = ctx.expenses;
+
+  const getExpenses = useCallback(async () => {
+    const url =
+      "https://expense-tracker-54771-default-rtdb.firebaseio.com/expenses.json";
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (!response.ok) {
+        throw data.error.message;
+      }
+      const allExpenses = [];
+      for (const key in data) {
+        const expenseData = {
+          id: key,
+          ...data[key],
+        };
+        allExpenses.push(expenseData);
+      }
+      return allExpenses;
+    } catch (error) {
+      alert(error);
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await getExpenses();
+      if (!res) {
+        return;
+      }
+      ctx.getExpenses(res);
+    }
+    fetchData();
+  }, [getExpenses, ctx]);
 
   async function verifyEmailHandler(e) {
     e.preventDefault();
@@ -31,18 +66,21 @@ function Welcome() {
       category: categoryRef.current.value,
     };
     addExpeses(expense);
-    ctx.expenses.push(expense);
+    ctx.addExpense(expense);
+    amountRef.current.value = "";
+    descriptionRef.current.value = "";
+    categoryRef.current.value = "";
   }
 
   function editHandler(id, amount, des, cat) {
-    amountRef.current.value = amount
-    descriptionRef.current.value = des
-    categoryRef.current.value = cat
-    deleteExpeses(id)
+    amountRef.current.value = amount;
+    descriptionRef.current.value = des;
+    categoryRef.current.value = cat;
+    deleteExpeses(id);
   }
 
   function deleteHandler(id) {
-    deleteExpeses(id)
+    deleteExpeses(id);
   }
 
   return (
@@ -60,14 +98,14 @@ function Welcome() {
       <div>
         <form onSubmit={addExpenseHandler}>
           <input
-          id="number"
+            id="number"
             type="number"
             ref={amountRef}
             placeholder="Enter Amount"
             required
           />
           <input
-          id="description"
+            id="description"
             type="text"
             ref={descriptionRef}
             placeholder="Description"
@@ -88,8 +126,19 @@ function Welcome() {
               return (
                 <li key={exp.id}>
                   {exp.amount}-{exp.description}-{exp.category}
-                  <button onClick={() => editHandler(exp.id,exp.amount,exp.description,exp.category)} >Edit</button>
-                  <button onClick={() => deleteHandler(exp.id)} >Delete</button>
+                  <button
+                    onClick={() =>
+                      editHandler(
+                        exp.id,
+                        exp.amount,
+                        exp.description,
+                        exp.category
+                      )
+                    }
+                  >
+                    Edit
+                  </button>
+                  <button onClick={() => deleteHandler(exp.id)}>Delete</button>
                 </li>
               );
             })}
