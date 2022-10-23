@@ -1,29 +1,20 @@
-import { Fragment } from "react";
-import { Route, Switch } from "react-router-dom";
-import LoginPage from "./Pages/LoginPage/Login";
-import NavBar from "./Pages/NavBar";
-import SignUpPage from "./Pages/SignUpPage/SignUp";
-import Welcome from "./Pages/WelcomePage/Welcome";
+import { Route, Routes } from "react-router-dom";
+import Login from "./Pages/login";
+import Profile from "./Pages/profile";
+import ResetPassword from "./Pages/resetPassword";
+import SignUp from "./Pages/signup";
+import Welcome from "./Pages/welcome";
 
 function App() {
-  const token = localStorage.getItem("user@mail.com");
   return (
-    <Fragment>
-      <NavBar />
-      <Switch>
-        <Route path="/" exact>
-          <SignUpPage />
-        </Route>
-        <Route path="/login">
-          <LoginPage />
-        </Route>
-        {token && (
-          <Route path="/welcome">
-            <Welcome />
-          </Route>
-        )}
-      </Switch>
-    </Fragment>
+    <Routes>
+      <Route path="/" element={<SignUp />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/welcome" element={<Welcome />}>
+        <Route path="profile" element={<Profile />} />
+      </Route>
+      <Route path="/resetPassword" element={<ResetPassword />} />
+    </Routes>
   );
 }
 
