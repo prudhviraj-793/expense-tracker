@@ -1,13 +1,14 @@
-import { Fragment, useContext, useRef } from "react";
+import { Fragment, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../Api/api";
-import Context from "../Context/Context";
+import { authActions } from "../store/authSlice";
 
 function Login() {
 
   const emailRef = useRef();
   const passwordRef = useRef();
-  const ctx = useContext(Context)
+  const dispacth = useDispatch()
   const navigate = useNavigate()
 
   async function loginHandler(e) {
@@ -22,8 +23,11 @@ function Login() {
       returnSecureToken: true,
     };
     const token = await login(user)
-    ctx.addUserId(enteredEmail)
-    ctx.addToken(token)
+    dispacth(authActions.addToken(token))
+    dispacth(authActions.addUserId(enteredEmail))
+    dispacth(authActions.isAuthenticated(true))
+    // ctx.addUserId(enteredEmail)
+    // ctx.addToken(token)
     localStorage.setItem(enteredEmail, token)
     navigate('/welcome')
   }
@@ -47,7 +51,7 @@ function Login() {
         </div>
       </form>
       <div>
-        <p>Don't have an account? Sign Up</p>
+        <Link to='/' >Don't have an account? Sign Up</Link>
       </div>
     </Fragment>
   );

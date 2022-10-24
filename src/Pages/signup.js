@@ -1,5 +1,5 @@
 import { Fragment, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../Api/api";
 
 function SignUp() {
@@ -56,7 +56,7 @@ function SignUp() {
         </div>
       </form>
       <div>
-        <p>Have an account? Login</p>
+        <Link to='/login' >Have an account? Login</Link>
       </div>
     </Fragment>
   );
