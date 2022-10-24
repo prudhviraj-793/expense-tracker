@@ -8,8 +8,9 @@ const Context = createContext({
     addUserId: () => {},
     addToken: () => {},
     addUserProfile: () => {},
-    getExpenses: () => {},
-    addExpense: () => {}
+    // getExpenses: () => {},
+    addExpense: () => {},
+    deleteExpense: () => {}
 })
 
 export default Context

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useContext, useEffect, useRef } from "react";
+import { Fragment, useContext, useRef } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { addExpeses, deleteExpeses, verifyEmail } from "../Api/api";
 import Context from "../Context/Context";
@@ -11,41 +11,6 @@ function Welcome() {
   const descriptionRef = useRef();
   const categoryRef = useRef();
   const expenses = ctx.expenses;
-
-  const getExpenses = useCallback(async () => {
-    const url =
-      "https://expense-tracker-54771-default-rtdb.firebaseio.com/expenses.json";
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      if (!response.ok) {
-        throw data.error.message;
-      }
-      const allExpenses = [];
-      for (const key in data) {
-        const expenseData = {
-          id: key,
-          ...data[key],
-        };
-        allExpenses.push(expenseData);
-      }
-      return allExpenses;
-    } catch (error) {
-      alert(error);
-      return;
-    }
-  }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      const res = await getExpenses();
-      if (!res) {
-        return;
-      }
-      ctx.getExpenses(res);
-    }
-    fetchData();
-  }, [getExpenses, ctx]);
 
   async function verifyEmailHandler(e) {
     e.preventDefault();
@@ -69,7 +34,6 @@ function Welcome() {
     ctx.addExpense(expense);
     amountRef.current.value = "";
     descriptionRef.current.value = "";
-    categoryRef.current.value = "";
   }
 
   function editHandler(id, amount, des, cat) {
@@ -81,6 +45,7 @@ function Welcome() {
 
   function deleteHandler(id) {
     deleteExpeses(id);
+    ctx.deleteExpense(id)
   }
 
   return (
