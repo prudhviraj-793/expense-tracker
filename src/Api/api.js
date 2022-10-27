@@ -40,26 +40,6 @@ export async function login(user) {
   }
 }
 
-export async function updateProfile(details) {
-  const url =
-    "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyAYgqSYR1Ydu_Vv2OHuBMFhaAfTFQK3gic";
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(details),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw data.error.message;
-    }
-  } catch (error) {
-    alert(error);
-  }
-}
-
 export async function verifyEmail(token) {
   const url =
     "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyAYgqSYR1Ydu_Vv2OHuBMFhaAfTFQK3gic";
@@ -99,35 +79,13 @@ export async function resetPassword(details) {
     if (!response.ok) {
       throw data.error.message;
     }
-    console.log(data);
   } catch (error) {
     alert(error);
     return;
   }
 }
 
-export async function addExpeses(exp) {
-  const url =
-    "https://expense-tracker-54771-default-rtdb.firebaseio.com/expenses.json";
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(exp),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw data.error.message;
-    }
-  } catch (error) {
-    alert(error);
-    return;
-  }
-}
-
-export async function deleteExpeses(id) {
+export async function deleteExpense(id) {
   const url = `https://expense-tracker-54771-default-rtdb.firebaseio.com/expenses/${id}.json`;
   try {
     const response = await fetch(url, {

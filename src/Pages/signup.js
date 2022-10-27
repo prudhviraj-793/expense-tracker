@@ -1,6 +1,7 @@
-import { Fragment, useRef } from "react";
+import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../Api/api";
+import '../css/signup.css'
 
 function SignUp() {
 
@@ -33,7 +34,7 @@ function SignUp() {
   }
 
   return (
-    <Fragment>
+    <div className="signup">
       <div>
         <h3>Sign Up</h3>
       </div>
@@ -58,7 +59,7 @@ function SignUp() {
       <div>
         <Link to='/login' >Have an account? Login</Link>
       </div>
-    </Fragment>
+    </div>
   );
 }
 

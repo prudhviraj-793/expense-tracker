@@ -1,21 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialExpensesState = {
+  userId: "",
   expenses: [],
+  editExpense: "",
+  total: 0,
 };
-
 
 const expensesSlice = createSlice({
   name: "expenses",
   initialState: initialExpensesState,
   reducers: {
-    addExpense(state, action) {
-      state.expenses = [...state.expenses, action.payload];
+    replaceExpenses(state, action) {
+      state.userId = action.payload.userId;
+      state.expenses = action.payload.expenses;
     },
-    getExpenses(state, action) {
-        if (state.expenses.length !== action.payload.length) {
-            state.expenses = [...action.payload]
-        }
+    addExpense(state, action) {
+      state.userId = action.payload.userId;
+      state.total = state.total + Number(action.payload.expense.amount);
+      state.expenses.push(action.payload.expense);
+    },
+    editExpense(state, action) {
+      state.editExpense = action.payload;
     },
     deleteExpense(state, action) {
       const id = action.payload;

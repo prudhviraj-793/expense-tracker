@@ -1,47 +1,31 @@
-import { Fragment, useCallback, useContext, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { updateProfile } from "../Api/api";
-import Context from "../Context/Context";
+import { getUserProfile, updateProfile } from "../store/actions";
+import { profileActions } from "../store/profileSlice";
 
 function Profile() {
   const navigate = useNavigate();
   const nameRef = useRef();
   const photoUrlRef = useRef();
-  const ctx = useContext(Context);
-  const token = ctx.token;
+  const token = useSelector((state) => state.auth.token);
+  const userId = useSelector((state) => state.auth.userId);
+  const dispacth = useDispatch();
+  const displayName = useSelector(state => state.profile.displayName)
+  const photoUrl = useSelector(state => state.profile.photoUrl)
 
-  const getUserProfile = useCallback(async (token) => {
-    const url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAYgqSYR1Ydu_Vv2OHuBMFhaAfTFQK3gic";
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        idToken: token,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    const user = {
-      displayName: data.users[0].displayName,
-      photoUrl: data.users[0].photoUrl,
-    };
-    return user;
-  }, []);
+  useEffect(() => {
+    async function fetchProfile() {
+      const response = await getUserProfile(token, userId)
+      dispacth(profileActions.updateProfile(response))
+    }
+    fetchProfile()
+  }, [token, userId, dispacth])
 
   function cancelHandler(e) {
     e.preventDefault();
     navigate("/welcome");
   }
-
-  useEffect(() => {
-    async function fetchData() {
-      const res = await getUserProfile(token)
-      ctx.expenses.push(res)
-    }
-    fetchData()
-  }, [getUserProfile, token, ctx.expenses]);
 
   function updateProfileHandler(e) {
     e.preventDefault();
@@ -53,6 +37,12 @@ function Profile() {
       displayName: enteredName,
       photoUrl: enteredUrl,
     };
+    dispacth(
+      profileActions.updateProfile({
+        displayName: enteredName,
+        photoUrl: enteredUrl,
+      })
+    );
     updateProfile(userProfile);
   }
 
@@ -68,14 +58,14 @@ function Profile() {
           <input
             type="text"
             ref={nameRef}
-            defaultValue={ctx.userProfile.displayName}
+            defaultValue={displayName}
             required
           />
           <label>Profile Photo URL :</label>
           <input
             type="text"
             ref={photoUrlRef}
-            defaultValue={ctx.userProfile.photoUrl}
+            defaultValue={photoUrl}
             required
           />
         </div>
