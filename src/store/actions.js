@@ -1,26 +1,37 @@
 import { expensesActions } from "./expensesSlice";
 
-export function getData() {
+export function getData(userId) {
   return async (dispacth) => {
     async function fetchData() {
       const url = `https://expense-tracker-54771-default-rtdb.firebaseio.com/expenses.json`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        if (!response.ok) {
-          throw data.error.message;
-        }
-        const expensesData = {
-          userId: data.userId || '',
-          expenses: data.expenses || []
-        }
-        dispacth(expensesActions.replaceExpenses(expensesData))
-      } catch (error) {
-        alert(error);
-        return;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (!response.ok) {
+        throw data.error.message;
       }
+      return data;
     }
-    await fetchData();
+    try {
+      const userData = await fetchData();
+      if (userData.userId === userId) {
+        let total = 0;
+        for (let key of userData.expenses) {
+          total += Number(key.amount);
+        }
+        dispacth(
+          expensesActions.replaceExpenses({
+            userId: userData.userId || "",
+            expenses: userData.expenses || [],
+            editExpense: "",
+            total,
+          })
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error);
+      return;
+    }
   };
 }
 
@@ -86,6 +97,6 @@ export function addExpeses(exp) {
         return;
       }
     }
-    await sendRequest()
+    await sendRequest();
   };
 }

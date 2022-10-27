@@ -31,7 +31,7 @@ function ExpensesFrom() {
         description: descriptionRef.current.value,
         category: categoryRef.current.value,
       },
-      total
+      total: total + Number(amountRef.current.value)
     };
     dispacth(expensesActions.addExpense(expense));
     amountRef.current.value = "";
